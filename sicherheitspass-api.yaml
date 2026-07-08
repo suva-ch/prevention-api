@@ -1,0 +1,1730 @@
+openapi: 3.1.0
+info:
+  version: 1.0.0
+  title: Sicherheitspass API
+  description: |
+    (DE) Beschreibt die gegenüber einem ERP angebotenen Schnittstellen auf Seite Suva für den Digitalen Sicherheitspass.
+    (EN) Describes the interfaces offered to an ERP system by Suva for the digital safety pass.
+  license:
+    name: Apache License 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+
+servers:
+  - url: 'https://apitest.suva.ch/safety-pass'
+    description: Staging server
+  - url: 'https://api.suva.ch/safety-pass'
+    description: Production server
+
+tags:
+  - name: Approvals
+  - name: Bulk Upload
+  - name: Conducting the Instruction
+  - name: Identification Cards
+  - name: Identification Documents
+  - name: Instructions
+  - name: Instruction Documents
+  - name: Job Profiles
+  - name: Profile Picture
+  - name: Safety Pass
+
+paths:
+  /v1/partner/{partnerNr}/sicherheitspaesse/massenupload:
+    post:
+      operationId: saveAllSicherheitspaesse
+      tags:
+        - Bulk Upload
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: partnerNr
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PartnerNummer'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MassenUploadResultDto'
+      responses:
+        '200':
+          description: 'Die Sicherheitspässe wurden erfolgreich validiert und - abhängig vom MassenUploadStatusEnumDto - gespeichert.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MassenUploadResultDto'
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /v1/partner/{partnerNr}/sicherheitspaesse:
+    get:
+      operationId: findSicherheitspaesse
+      tags:
+        - Safety Pass
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: partnerNr
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PartnerNummer'
+        - name: ahvNr
+          in: query
+          schema:
+            type: string
+        - name: vorname
+          in: query
+          schema:
+            type: string
+        - name: nachname
+          in: query
+          schema:
+            type: string
+        - name: geburtsdatum
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: 'Listet alle verfügbaren Sicherheitspässe entsprechend den Suchfiltern'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SicherheitspassUebersichtListDto'
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /v1/partner/{partnerNr}/sicherheitspaesse/instruktiondurchfuehrungen:
+    post:
+      summary: 'Erstellt Instruktionsdurchführungen für eine Liste von SicherheitspassIds'
+      operationId: createInstruktionDurchfuehrungen
+      tags:
+        - Conducting the Instruction
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: partnerNr
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PartnerNummer'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InstruktionDurchfuehrungCreateDto'
+      responses:
+        '204':
+          description: 'Instruktionsdurchführung wurde erstellt'
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /v1/partner/{partnerNr}/sicherheitspaesse/{id}:
+    get:
+      summary: 'Liefert einen Sicherheitspass'
+      operationId: getSicherheitspass
+      tags:
+        - Safety Pass
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: partnerNr
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PartnerNummer'
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        '200':
+          description: 'Liefert einen Sicherheitspass'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SicherheitspassDto'
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /v1/partner/{partnerNr}/sicherheitspaesse/{sicherheitspassId}/ausweise:
+    get:
+      summary: 'Liefert eine Liste von Ausweisen für einen Sicherheitspass'
+      operationId: findAusweise
+      tags:
+        - Identification Cards
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: partnerNr
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PartnerNummer'
+        - name: sicherheitspassId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        '200':
+          description: 'Liefert eine Liste von Ausweisen für einen Sicherheitspass'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AusweisListDto'
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /v1/partner/{partnerNr}/sicherheitspaesse/{sicherheitspassId}/ausweise/{id}:
+    get:
+      summary: 'Liefert einen Ausweis'
+      operationId: getAusweis
+      tags:
+        - Identification Cards
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: partnerNr
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PartnerNummer'
+        - name: sicherheitspassId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        '200':
+          description: 'Liefert einen Ausweis'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AusweisDto'
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /v1/partner/{partnerNr}/sicherheitspaesse/{sicherheitspassId}/ausweise/{ausweisId}/dokumente/{id}:
+    get:
+      description: 'Herunterladen eines Ausweis-Dokumentes'
+      operationId: getAusweisDokument
+      tags:
+        - Identification Documents
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: partnerNr
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PartnerNummer'
+        - name: sicherheitspassId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+        - name: ausweisId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        '200':
+          description: 'Liefert den Dokumentinhalt als Binary-Stream'
+          headers:
+            Content-Disposition:
+              schema:
+                type: string
+              description: Das Format ist `attachment; filename="name.<mimeTypeExt>"`
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /v1/partner/{partnerNr}/sicherheitspaesse/{sicherheitspassId}/profilbild:
+    get:
+      description: 'Herunterladen eines Profilbildes'
+      operationId: getProfilbild
+      tags:
+        - Profile Picture
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: partnerNr
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PartnerNummer'
+        - name: sicherheitspassId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        '200':
+          description: 'Liefert den Profilbildinhalt als Binary-Stream'
+          headers:
+            Content-Disposition:
+              schema:
+                type: string
+              description: Das Format ist `attachment; filename="name.<mimeTypeExt>"`
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /v1/partner/{partnerNr}/sicherheitspaesse/{sicherheitspassId}/instruktiondurchfuehrungen:
+    get:
+      summary: 'Liefert eine Liste von Instruktionsdurchfuehrungen für einen Sicherheitspass'
+      operationId: findInstruktionDurchfuehrungen
+      tags:
+        - Conducting the Instruction
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: partnerNr
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PartnerNummer'
+        - name: sicherheitspassId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+        - name: Accept-Language
+          in: header
+          schema:
+            type: string
+          required: true
+          description: Sprache des Benutzers (DE,FR,IT,PT)
+        - name: jobProfilIds
+          in: query
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/UUID'
+        - name: instruktionDurchfuehrungStatus
+          in: query
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/InstruktionDurchfuehrungStatusEnumDto'
+        - name: pageable
+          in: query
+          style: form
+          explode: true
+          required: false
+          schema:
+            $ref: '#/components/schemas/InstruktionDurchfuehrungPageableDto'
+      responses:
+        '200':
+          description: 'Liefert eine Liste von Instruktionsdurchfuehrungen für einen Sicherheitspass'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstruktionDurchfuehrungPageDto'
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /v1/partner/{partnerNr}/sicherheitspaesse/{sicherheitspassId}/instruktiondurchfuehrungen/{id}:
+    get:
+      summary: 'Liefert eine Instruktiondurchführung'
+      operationId: getInstruktionDurchfuehrung
+      tags:
+        - Conducting the Instruction
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: Accept-Language
+          in: header
+          schema:
+            type: string
+          required: true
+          description: Sprache des Benutzers (DE,FR,IT,PT)
+        - name: partnerNr
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PartnerNummer'
+        - name: sicherheitspassId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        '200':
+          description: 'Liefert eine Instruktiondurchführung'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstruktionDurchfuehrungDto'
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /v1/partner/{partnerNr}/freigaben:
+    get:
+      operationId: findFreigaben
+      tags:
+        - Approvals
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: partnerNr
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PartnerNummer'
+        - name: suchfeld
+          in: query
+          schema:
+            type: string
+        - name: freigabeStatus
+          in: query
+          schema:
+            $ref: '#/components/schemas/FreigabeStatusEnumDto'
+        - name: pageable
+          in: query
+          style: form
+          explode: true
+          required: false
+          schema:
+            $ref: '#/components/schemas/FreigabePageableDto'
+      responses:
+        '200':
+          description: 'Listet alle verwalteten verfügbaren Sicherheitspässe für einen Betrieb entsprechend den Suchfiltern'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FreigabePageDto'
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    post:
+      summary: 'Speichert eine Freigabe fuer einen Sicherheitspass oder Einladung und Betrieb im Status OFFEN'
+      operationId: createFreigabe
+      tags:
+        - Approvals
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: partnerNr
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PartnerNummer'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FreigabeCreateDto'
+      responses:
+        '204':
+          description: 'Freigabe wurde erfolgreich erstellt'
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /v1/partner/{partnerNr}/freigaben/{id}:
+    delete:
+      operationId: deleteFreigabe
+      tags:
+        - Approvals
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: partnerNr
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PartnerNummer'
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        '204':
+          description: 'Freigabe wurde erfolgreich gelöscht'
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /v1/partner/{partnerNr}/instruktionen:
+    get:
+      summary: 'Liefert eine Liste von Instruktionen'
+      operationId: findInstruktionen
+      tags:
+        - Instructions
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: partnerNr
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PartnerNummer'
+        - name: Accept-Language
+          in: header
+          schema:
+            type: string
+          required: true
+          description: Sprache des Benutzers (DE,FR,IT,PT)
+        - name: filter
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/InstruktionFilterDto'
+        - name: pageable
+          in: query
+          style: form
+          explode: true
+          required: false
+          schema:
+            $ref: '#/components/schemas/InstruktionPageableDto'
+      responses:
+        '200':
+          description: 'Liefert eine Liste von Instruktionen'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstruktionPageDto'
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    post:
+      summary: 'Erstellt eine eigene Instruktion'
+      operationId: createInstruktion
+      tags:
+        - Instructions
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: Accept-Language
+          in: header
+          schema:
+            type: string
+          required: true
+          description: Sprache des Benutzers (DE,FR,IT,PT)
+        - name: partnerNr
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PartnerNummer'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                dokumente:
+                  description: 'Instruktion-Dokumente als Multipart-File, der filename und mimeTyp der Dokumente muss der DokumentMetadataDtoListe entsprechen.'
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                instruktion:
+                  $ref: '#/components/schemas/InstruktionDto'
+              required:
+                - instruktion
+      responses:
+        '204':
+          description: 'Eigene Instruktion wurde erstellt'
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /v1/partner/{partnerNr}/instruktionen/{id}:
+    get:
+      summary: 'Liefert eine Instruktion'
+      operationId: getInstruktion
+      tags:
+        - Instructions
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: Accept-Language
+          in: header
+          schema:
+            type: string
+          required: true
+          description: Alle möglichen Content-Sprachen (InstruktionenSprache)
+        - name: partnerNr
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PartnerNummer'
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        '200':
+          description: 'Liefert eine Instruktion'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstruktionDto'
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /v1/partner/{partnerNr}/instruktionen/{instruktionId}/dokumente/{id}:
+    get:
+      description: 'Herunterladen eines Instruktion-Dokumentes'
+      operationId: getInstruktionDokument
+      tags:
+        - Instruction Documents
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: partnerNr
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PartnerNummer'
+        - name: instruktionId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        '200':
+          description: 'Liefert den Dokumentinhalt als Binary-Stream'
+          headers:
+            Content-Disposition:
+              schema:
+                type: string
+              description: Das Format ist `attachment; filename="name.<mimeTypeExt>"`
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /v1/partner/{partnerNr}/instruktionen/{id}/deaktivieren:
+    put:
+      summary: 'Deaktiviert eine eigene Instruktion'
+      operationId: deaktiviereInstruktion
+      tags:
+        - Instructions
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: Accept-Language
+          in: header
+          schema:
+            type: string
+          required: true
+          description: Sprache des Benutzers (DE,FR,IT,PT)
+        - name: partnerNr
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PartnerNummer'
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        '200':
+          description: 'Instruktion wurde erfolgreich deaktiviert'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstruktionDto'
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /v1/partner/{partnerNr}/instruktionen/jobprofile:
+    get:
+      summary: 'Liefert eine Liste von Jobprofilen'
+      operationId: getJobProfile
+      tags:
+        - Job Profiles
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: partnerNr
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PartnerNummer'
+      responses:
+        '200':
+          description: 'Liefert eine Liste von Jobprofilen'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobProfilListDto'
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+components:
+  schemas:
+    BasisDto:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/UUID'
+        sequenznummer:
+          type: integer
+          format: int64
+      required:
+        - id
+
+    FileMetadataDto:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            filename:
+              type: string
+              minLength: 1
+              maxLength: 255
+            mimeType:
+              type: string
+              maxLength: 200
+            filesize:
+              type: integer
+              format: int64
+      required:
+        - id
+        - filename
+        - mimeType
+
+    Error:
+      description: |
+        (DE) Fehlermeldung
+        (EN) Error message
+      type: object
+      properties:
+        httpStatusCode:
+          type: integer
+        meldungsCode:
+          type: string
+        meldungsId:
+          type: string
+          format: uuid
+        message:
+          type: string
+      required:
+        - httpStatusCode
+        - meldungsCode
+        - meldungsId
+        - message
+
+    UUID:
+      type: string
+      format: uuid
+
+    UserId:
+      type: string
+      maxLength: 36
+
+    MassenUploadResultDto:
+      type: object
+      properties:
+        mitarbeiterList:
+          type: array
+          items:
+            $ref: '#/components/schemas/MassenUploadMitarbeiterDto'
+        massenUploadStatus:
+          $ref: '#/components/schemas/MassenUploadStatusEnumDto'
+      required:
+        - mitarbeiterList
+        - massenUploadStatus
+
+    MassenUploadStatusEnumDto:
+      type: string
+      description: >
+        * INIT = Initialzustand, wenn der Client die Massenupload Items an den Server schickt 
+        * ERFOLGREICH = Alle Massenupload-Items sind fehlerfrei
+        * FEHLER = Einzelne Massenupload-Items enthalten Fehler
+      enum: [ INIT, ERFOLGREICH, FEHLER ]
+
+    MassenUploadMitarbeiterDto:
+      type: object
+      properties:
+        ahvNr:
+          $ref: '#/components/schemas/AhvNr'
+        vorname:
+          type: string # keine Einschränkung da informativ (wird von ZAS geholt)
+        nachname:
+          type: string # keine Einschränkung da informativ (wird von ZAS geholt)
+        geburtsdatum:
+          $ref: '#/components/schemas/Geburtsdatum' # optional (wird von ZAS geholt, wird für die Speicherung der Einladung aber gebraucht)
+        sprache:
+          $ref: '#/components/schemas/SpracheEnumDto'
+        kommunikationKanal:
+          $ref: '#/components/schemas/KommunikationKanalEnumDto'
+        email:
+          $ref: '#/components/schemas/Email'
+        mobile:
+          $ref: '#/components/schemas/Mobile'
+        freigabeStatus:
+          $ref: '#/components/schemas/FreigabeStatusEnumDto'
+        fehlerliste:
+          type: array
+          items:
+            $ref: '#/components/schemas/MassenUploadMitarbeiterFehlerDto'
+      required:
+        - ahvNr
+        - vorname
+        - nachname
+        - sprache
+        - kommunikationKanal
+        - fehlerliste
+
+    MassenUploadMitarbeiterFehlerDto:
+      type: object
+      properties:
+        attribut:
+          $ref: '#/components/schemas/MassenUploadMitarbeiterAttributEnumDto'
+        grund:
+          $ref: '#/components/schemas/MassenUploadMitarbeiterFehlerGrundEnumDto'
+      required:
+        - attribut
+        - grund
+
+    MassenUploadMitarbeiterAttributEnumDto:
+      type: string
+      description: >
+        * AHV_NR = Ahv Nummer des Mitarbeiters
+        * VORNAME = Vorname des Mitarbeiters
+        * NACHNAME = Nachname des Mitarbeiters
+        * SPRACHE = Sprache des Mitarbeiters
+        * KOMMUNIKATION_KANAL = Kommunikationskanal [ EMAIL, MOBILE ]
+        * EMAIL = Email des Mitarbeiters
+        * MOBILE = Mobiltelefon des Mitarbeiters
+      enum: [ AHV_NR, VORNAME, NACHNAME, SPRACHE, KOMMUNIKATION_KANAL, EMAIL, MOBILE ]
+
+    MassenUploadMitarbeiterFehlerGrundEnumDto:
+      type: string
+      # VALID ist gültig und wir daher nicht auf die Fehlerliste gesetzt
+      # AGE_OVER ist AMA spezifisch und hier ich relevant
+      # TOO_MANY_INVALID, THIRD_STRIKE, TEN_LIMIT_LOCK: technische Exceptions vom ZasAdapter welche geworfen und nicht gefangen werden (für Throttling)
+      description: >
+        * NOT_EXIST = Die Ahv Nummer existiert nicht
+        * INVALID_CHECKSUM = Die Prüfzimmer der Ahv Nummer ist falsch
+        * DUBLETTE = Die Ahv Nummer kommt mehrfach vor
+        * ALREADY_EXISTS = Es existiert bereits ein Sicherheitspass mit dieser Ahv Nummer (SicherheitspassUserIdDuplicateException, SicherheitspassSVNummerDuplicateException, SicherheitspassIdentityDuplicateException(vorname, nachname, geburtsdatum))
+        * ANDERE = Fehler von anderen Attributen als Ahv Nummer (gemäss MassenUploadMitarbeiterAttributEnumDto)
+      enum: [ NOT_EXIST, INVALID_CHECKSUM, DUBLETTE, ALREADY_EXISTS, ANDERE ]
+
+    MitarbeiterDto:
+      allOf:
+        - $ref: '#/components/schemas/BasisDto'
+        - type: object
+          properties:
+            ahvNr:
+              $ref: '#/components/schemas/AhvNr'
+            vorname:
+              $ref: '#/components/schemas/Vorname'
+            nachname:
+              $ref: '#/components/schemas/Nachname'
+            geburtsdatum:
+              $ref: '#/components/schemas/Geburtsdatum'
+            sprache:
+              $ref: '#/components/schemas/SpracheEnumDto'
+            kommunikationKanal:
+              $ref: '#/components/schemas/KommunikationKanalEnumDto'
+            email:
+              $ref: '#/components/schemas/Email'
+            mobile:
+              $ref: '#/components/schemas/Mobile'
+      required:
+        - vorname
+        - nachname
+        - geburtsdatum
+        - sprache
+        - kommunikationKanal
+
+    SicherheitspassDto:
+      allOf:
+        - $ref: '#/components/schemas/MitarbeiterDto'
+        - type: object
+          properties:
+            erstellungsZeitpunkt:
+              type: string
+              format: 'date-time'
+            userId:
+              $ref: '#/components/schemas/UserId'
+            lesezugriff:
+              $ref: '#/components/schemas/LesezugriffDto'
+            profilbild:
+              $ref: '#/components/schemas/ProfilbildMetadataDto'
+            notfallkontakte:
+              type: array
+              items:
+                $ref: '#/components/schemas/NotfallkontaktDto'
+      required:
+        - notfallkontakte
+
+    InstruktionPageDto:
+      type: object
+      properties:
+        instruktionen:
+          type: array
+          items:
+            $ref: '#/components/schemas/InstruktionUebersichtDto'
+        totalElements:
+          type: integer
+          format: 'int64'
+        statistics:
+          type: array
+          items:
+            $ref: '#/components/schemas/StatisticDto'
+      required:
+        - instruktionen
+        - totalElements
+        - statistics
+
+    InstruktionDurchfuehrungPageDto:
+      type: object
+      properties:
+        instruktionDurchfuehrungen:
+          type: array
+          items:
+            $ref: '#/components/schemas/InstruktionDurchfuehrungUebersichtDto'
+        totalElements:
+          type: integer
+          format: 'int64'
+        statistics:
+          type: array
+          items:
+            $ref: '#/components/schemas/StatisticDto'
+      required:
+        - instruktionDurchfuehrungen
+        - totalElements
+        - statistics
+
+    StatisticDto:
+      type: object
+      description: 'Stellt die Anzahl der Datensätze für einen bestimmten Filter dar'
+      properties:
+        name:
+          $ref: '#/components/schemas/StatisticNameEnumDto'
+        values:
+          type: array
+          items:
+            $ref: '#/components/schemas/StatisticDetailsDto'
+
+    StatisticNameEnumDto:
+      type: string
+      description: >
+        * INSTRUKTION_DURCHFUEHRUNG_STATUS = Instruktion Durchfuehrung Status
+        * JOB_PROFIL = Job Profil
+        * INSTRUKTION_OWNER = Instruktion Owner
+      enum: [ INSTRUKTION_DURCHFUEHRUNG_STATUS, JOB_PROFIL, INSTRUKTION_OWNER ]
+
+    StatisticDetailsDto:
+      type: object
+      properties:
+        name:
+          type: string
+        key:
+          type: string
+        count:
+          type: integer
+
+    InstruktionDurchfuehrungUebersichtDto:
+      allOf:
+        - $ref: '#/components/schemas/BasisDto'
+        - type: object
+          properties:
+            instruktionTyp:
+              $ref: '#/components/schemas/InstruktionTypEnumDto'
+            instruktionOwner:
+              $ref: '#/components/schemas/InstruktionOwnerEnumDto'
+            instruktionIsActive:
+              type: boolean
+            instruktionSichtbarkeiten:
+              type: array
+              items:
+                $ref: '#/components/schemas/InstruktionSichtbarkeitEnumDto'
+            instruktionDurchfuehrungsdauer:
+              type: integer
+            instruktionContentType:
+              type: string
+            titel:
+              type: string
+              maxLength: 100
+            status:
+              $ref: '#/components/schemas/InstruktionDurchfuehrungStatusEnumDto'
+            erledigtAm:
+              type: string
+              format: 'date'
+            gueltigBis:
+              type: string
+              format: 'date'
+          required:
+            - instruktionIsActive
+            - instruktionSichtbarkeiten
+
+    InstruktionDurchfuehrungCreateDto:
+      type: object
+      properties:
+        sicherheitspassIds:
+          description: 'Im Privat Kontext werden allfällig übergebene SicherheitspassIds ignoriert und UserContext übernommen.'
+          type: array
+          items:
+            $ref: '#/components/schemas/UUID'
+        instruktionenIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/UUID'
+      required:
+        - sicherheitspassIds
+        - instruktionenIds
+
+    InstruktionUebersichtDto:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/UUID'
+        instruktionTyp:
+          $ref: '#/components/schemas/InstruktionTypEnumDto'
+        instruktionOwner:
+          $ref: '#/components/schemas/InstruktionOwnerEnumDto'
+        titel:
+          type: string
+          maxLength: 100
+        status:
+          $ref: '#/components/schemas/InstruktionDurchfuehrungStatusEnumDto'
+        durchfuehrungsdauer:
+          type: integer
+        contentType:
+          type: string
+        sprachen:
+          type: array
+          items:
+            $ref: '#/components/schemas/InstruktionenSpracheEnumDto'
+
+    InstruktionDto:
+      allOf:
+        - $ref: '#/components/schemas/BasisDto'
+        - type: object
+          properties:
+            instruktionTyp:
+              $ref: '#/components/schemas/InstruktionTypEnumDto'
+            instruktionOwner:
+              $ref: '#/components/schemas/InstruktionOwnerEnumDto'
+            titel:
+              type: string
+              maxLength: 100
+            untertitel:
+              type: string
+            beschreibung:
+              type: string
+            startbild:
+              $ref: '#/components/schemas/StartbildDto'
+            scormFormat:
+              $ref: '#/components/schemas/ScormFormatEnumDto'
+            scormDateiUrl:
+              type: string
+            vimeoId:
+              type: integer
+            gueltigAnzahlMonate:
+              type: integer
+              minimum: 1
+              maximum: 120
+            isActive:
+              type: boolean
+            isTemplate:
+              type: boolean
+            erstellerUserId:
+              type: string
+            partnerNr:
+              $ref: '#/components/schemas/PartnerNummer'
+            durchfuehrungsdauer:
+              type: integer
+            contentType:
+              type: string
+            dokumente:
+              type: array
+              items:
+                $ref: '#/components/schemas/DokumentMetadataDto'
+            jobProfile:
+              type: array
+              items:
+                $ref: '#/components/schemas/JobProfilDto'
+            sprache:
+              $ref: '#/components/schemas/InstruktionenSpracheEnumDto'
+            sprachen:
+              type: array
+              items:
+                $ref: '#/components/schemas/InstruktionenSpracheEnumDto'
+            erfassungssprache:
+              $ref: '#/components/schemas/SpracheEnumDto'
+      required:
+        - titel
+        - beschreibung
+        - gueltigAnzahlMonate
+        - isActive
+        - isTemplate
+
+    InstruktionDurchfuehrungDto:
+      allOf:
+        - $ref: '#/components/schemas/BasisDto'
+        - type: object
+          properties:
+            status:
+              $ref: '#/components/schemas/InstruktionDurchfuehrungStatusEnumDto'
+            stateData:
+              description: 'Speichert den Runtime State eines WBT'
+              type: string
+            instruktion:
+              $ref: '#/components/schemas/InstruktionDto'
+      required:
+        - status
+        - instruktion
+
+    InstruktionFilterDto:
+      description: Filter von Instruktionen
+      type: object
+      properties:
+        titel:
+          type: string
+        instruktionSichtbarkeit:
+          $ref: '#/components/schemas/InstruktionSichtbarkeitEnumDto'
+        jobProfilIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/UUID'
+        instruktionOwner:
+          type: array
+          items:
+            $ref: '#/components/schemas/InstruktionOwnerEnumDto'
+      required:
+        - instruktionSichtbarkeit
+        - jobProfilIds
+        - instruktionOwner
+
+    JobProfilDto:
+      allOf:
+        - $ref: '#/components/schemas/BasisDto'
+        - type: object
+          properties:
+            bezeichnungDe:
+              type: string
+              maxLength: 100
+            bezeichnungFr:
+              type: string
+              maxLength: 100
+            bezeichnungIt:
+              type: string
+              maxLength: 100
+            bezeichnungPt:
+              type: string
+              maxLength: 100
+            isActive:
+              type: boolean
+      required:
+        - bezeichnungDe
+        - bezeichnungFr
+        - bezeichnungIt
+        - bezeichnungPt
+        - isActive
+
+    JobProfilListDto:
+      type: object
+      properties:
+        jobProfile:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobProfilDto'
+      required:
+        - jobProfile
+
+    NotfallkontaktDto:
+      allOf:
+        - $ref: '#/components/schemas/BasisDto'
+        - type: object
+          properties:
+            vorname:
+              $ref: '#/components/schemas/Vorname'
+            nachname:
+              $ref: '#/components/schemas/Nachname'
+            mobile:
+              $ref: '#/components/schemas/Mobile'
+            beziehung:
+              type: string
+              maxLength: 50
+      required:
+        - vorname
+        - nachname
+        - mobile
+        - beziehung
+
+    FreigabePageDto:
+      type: object
+      properties:
+        sicherheitspaesse:
+          type: array
+          items:
+            $ref: '#/components/schemas/SicherheitspassUebersichtDto'
+        totalElements:
+          type: integer
+          format: 'int64'
+      required:
+        - sicherheitspaesse
+        - totalElements
+
+    FreigabeCreateDto:
+      type: object
+      properties:
+        sicherheitspassId:
+          $ref: '#/components/schemas/UUID'
+        mitarbeiter:
+          $ref: '#/components/schemas/MitarbeiterDto'
+        partnerNr:
+          $ref: '#/components/schemas/PartnerNummer'
+      required:
+        - partnerNr
+
+    SicherheitspassUebersichtListDto:
+      type: object
+      properties:
+        sicherheitspaesse:
+          type: array
+          items:
+            $ref: '#/components/schemas/SicherheitspassUebersichtDto'
+      required:
+        - sicherheitspaesse
+
+    SicherheitspassUebersichtDto:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/UUID'
+        ahvNr:
+          $ref: '#/components/schemas/AhvNr'
+        vorname:
+          $ref: '#/components/schemas/Vorname'
+        nachname:
+          $ref: '#/components/schemas/Nachname'
+        geburtsdatum:
+          $ref: '#/components/schemas/Geburtsdatum'
+        freigabeId:
+          $ref: '#/components/schemas/UUID'
+        freigabeStatus:
+          $ref: '#/components/schemas/FreigabeStatusEnumDto'
+        istInstruktionenHinzufuegenErlaubt:
+          type: boolean
+        istFavorit:
+          type: boolean
+
+    PartnerNummer:
+      description: 'ID eines Geschäftspartners.'
+      type: string
+      maxLength: 50
+
+    AhvNr:
+      description: 'Sozialversicherungsnummer'
+      type: string
+      pattern: '^\d{3}\.\d{4}\.\d{4}\.\d{2}$'
+      x-suva-validators: [ 'svNumber' ]
+
+    Vorname:
+      type: string
+      maxLength: 40
+      x-suva-validators: [ 'firstname(40)' ]
+
+    Nachname:
+      type: string
+      maxLength: 40
+      x-suva-validators: [ 'lastname(40)' ]
+
+    Geburtsdatum:
+      type: string
+      format: date
+      x-suva-validators: [ 'dateOfBirth(120)' ]
+
+    Email:
+      type: string
+      maxLength: 128
+      x-suva-validators: [ 'email(128)' ]
+
+    Mobile:
+      type: string
+      maxLength: 30
+      x-suva-validators: [ 'phone()' ]
+
+    DokumentMetadataDto:
+      allOf:
+        - $ref: '#/components/schemas/FileMetadataDto'
+
+    LesezugriffDto:
+      type: object
+      properties:
+        code:
+          $ref: '#/components/schemas/UUID'
+        zaehler:
+          type: integer
+      required:
+        - code
+        - zaehler
+
+    ProfilbildMetadataDto:
+      allOf:
+        - $ref: '#/components/schemas/FileMetadataDto'
+
+    StartbildDto:
+      type: object
+      properties:
+        xl:
+          type: string
+        l:
+          type: string
+        m:
+          type: string
+        s:
+          type: string
+        xs:
+          type: string
+        standard:
+          type: string
+        fallback:
+          type: string
+        alt:
+          type: string
+      required:
+        - standard
+        - fallback
+
+    InstruktionTypEnumDto:
+      type: string
+      description: >
+        * E_LEARNING = Typ E-Learning-Instruktion
+        * TEXT = Typ Text mit Links-Instruktion
+        * VIDEO = Typ Video-Instruktion
+      enum: [ E_LEARNING, TEXT, VIDEO ]
+
+    InstruktionOwnerEnumDto:
+      type: string
+      description: >
+        * SUVA = Owner Suva
+        * INDIVIDUELL = Owner Individuell
+      enum: [ SUVA, INDIVIDUELL ]
+
+    InstruktionSichtbarkeitEnumDto:
+      type: string
+      description: >
+        * FACE_2_FACE = Sichtbarkeit bei Face2Face
+        * ONLINE_KATALOG = Sichtbarkeit beim Online-Katalog
+      enum: [ FACE_2_FACE, ONLINE_KATALOG ]
+
+    ScormFormatEnumDto:
+      type: string
+      description: >
+        * 1.2 = Scorm Format 1.2
+        * 2004 = Scorm Format 2004
+        * AICC = Scorm Format AICC
+      enum: [ 1.2, 2004, AICC ]
+
+    InstruktionDurchfuehrungStatusEnumDto:
+      type: string
+      description: >
+        * OFFEN = Durchfuehrung offen
+        * ERLEDIGT = Durchfuehrung erledigt
+        * ABGELAUFEN = Durchfuehrung abgelaufen
+      enum: [ OFFEN, ERLEDIGT, ABGELAUFEN ]
+
+    FreigabeStatusEnumDto:
+      type: string
+      description: >
+        * ERTEILT = Freigabe erteilt
+        * OFFEN = Freigabe offen
+      enum: [ ERTEILT, OFFEN ]
+
+    KommunikationKanalEnumDto:
+      type: string
+      description: >
+        * EMAIL = Email Adresse
+        * MOBILE = Telefon mobile
+      enum: [ EMAIL, MOBILE ]
+
+    SpracheEnumDto:
+      type: string
+      description: >
+        * DE = Deutsch
+        * FR = Französisch
+        * IT = Italienisch
+        * PT = Portugiesisch
+      enum: [ DE, FR, IT, PT ]
+
+    InstruktionenSpracheEnumDto:
+      type: string
+      description: >
+        * DE = Deutsch
+        * FR = Französisch
+        * IT = Italienisch
+        * HR = Kroatisch
+        * PL = Polnisch
+        * PT = Portugiesisch
+        * SQ = Albanisch
+        * SR = Serbisch
+      enum: [ DE, FR, IT, HR, PL, PT, SQ, SR ]
+
+    FreigabePageableDto:
+      type: object
+      properties:
+        page:
+          description: 'Auf dieser Seite beginnen (erste Seite = 0)'
+          default: 0
+          type: integer
+        size:
+          description: 'Diese Seitengröße verwenden'
+          default: 20
+          type: integer
+        orderBy:
+          description: 'Namen der Properties, nach denen die Ergebnismenge sortiert werden soll'
+          type: array
+          items:
+            $ref: '#/components/schemas/FreigabeSortByEnumDto'
+        direction:
+          description: 'Richtungen der Sortierreihenfolgen'
+          type: array
+          items:
+            $ref: '#/components/schemas/SortDirectionEnumDto'
+      required:
+        - page
+        - size
+        - orderBy
+        - direction
+
+    InstruktionPageableDto:
+      type: object
+      properties:
+        page:
+          description: 'Auf dieser Seite beginnen (erste Seite = 0)'
+          default: 0
+          type: integer
+        size:
+          description: 'Diese Seitengröße verwenden'
+          default: 20
+          type: integer
+        orderBy:
+          description: 'Namen der Properties, nach denen die Ergebnismenge sortiert werden soll'
+          type: array
+          items:
+            $ref: '#/components/schemas/InstruktionSortByEnumDto'
+        direction:
+          description: 'Richtungen der Sortierreihenfolgen'
+          type: array
+          items:
+            $ref: '#/components/schemas/SortDirectionEnumDto'
+      required:
+        - page
+        - size
+        - orderBy
+        - direction
+
+    InstruktionDurchfuehrungPageableDto:
+      type: object
+      properties:
+        page:
+          description: 'Auf dieser Seite beginnen (erste Seite = 0)'
+          default: 0
+          type: integer
+        size:
+          description: 'Diese Seitengröße verwenden'
+          default: 20
+          type: integer
+        orderBy:
+          description: 'Namen der Properties, nach denen die Ergebnismenge sortiert werden soll'
+          type: array
+          items:
+            $ref: '#/components/schemas/InstruktionDurchfuehrungSortByEnumDto'
+        direction:
+          description: 'Richtungen der Sortierreihenfolgen'
+          type: array
+          items:
+            $ref: '#/components/schemas/SortDirectionEnumDto'
+      required:
+        - page
+        - size
+        - orderBy
+        - direction
+
+    FreigabeSortByEnumDto:
+      type: string
+      description: >
+        * STATUS = Status
+        * NACHNAMEN = Nachnamen
+        * FAVORIT = Favorit
+      enum: [ STATUS, NACHNAMEN, FAVORIT ]
+
+    InstruktionSortByEnumDto:
+      type: string
+      description: >
+        * TITEL = Titel
+      enum: [ TITEL ]
+
+    InstruktionDurchfuehrungSortByEnumDto:
+      type: string
+      description: >
+        * TITEL = Titel
+        * STATUS = Status
+        * ERLEDIGT_AM = Erledigt am
+        * GUELTIG_BIS = Gültig bis
+      enum: [ TITEL, STATUS, ERLEDIGT_AM, GUELTIG_BIS ]
+
+    SortDirectionEnumDto:
+      type: string
+      description: >
+        * ASC = Ascending
+        * DESC = Descending
+      enum: [ ASC, DESC ]
+
+    AusweisListDto:
+      type: object
+      properties:
+        ausweise:
+          type: array
+          items:
+            $ref: '#/components/schemas/AusweisDto'
+      required:
+        - ausweise
+
+    AusweisDto:
+      allOf:
+        - $ref: '#/components/schemas/AusweisCreateDto'
+        - type: object
+          properties:
+            shouldSendNotification:
+              type: boolean
+
+    AusweisCreateDto:
+      allOf:
+        - $ref: '#/components/schemas/BasisDto'
+        - type: object
+          properties:
+            typ:
+              $ref: '#/components/schemas/AusweisTypEnumDto'
+            titel:
+              type: string
+            ausgestelltVon:
+              type: string
+            ausgestelltAm:
+              type: string
+              format: date
+            gueltigBis:
+              type: string
+              format: date
+            ausweisart:
+              $ref: '#/components/schemas/AusweisartEnumDto'
+            ausweisnummer:
+              type: string
+            ausweistypen:
+              type: array
+              items:
+                type: string
+            dokumente:
+              type: array
+              items:
+                $ref: '#/components/schemas/DokumentMetadataDto'
+      required:
+        - typ
+        - ausweistypen
+        - dokumente
+
+    AusweisTypEnumDto:
+      type: string
+      description: >
+        * AUSWEIS = Ausweis
+        * ZERTIFIKAT = Zertifikat
+      enum: [ AUSWEIS, ZERTIFIKAT ]
+
+    AusweisartEnumDto:
+      type: string
+      description: >
+        * ARBEITSBUEHNENAUSWEIS = Arbeitsbühnen Ausweis
+        * BAUMASCHINENFUEHRERAUSWEIS = Baumaschinenführer Ausweis
+        * FUEHRERAUSWEIS = Führerausweis
+        * HEBEBUEHNENAUSWEIS_IPAF = Hebebühnenausweis / IPAF
+        * SUVA_KRANFUEHRERAUSWEIS = Suva-Kranführerausweis
+        * NIV_15 = NIV 15
+        * PSAGA = PSAgA
+        * STAPLERAUSWEIS = Staplerausweis
+        * ANDERE = Andere
+      enum: [ ARBEITSBUEHNENAUSWEIS, BAUMASCHINENFUEHRERAUSWEIS, FUEHRERAUSWEIS, HEBEBUEHNENAUSWEIS_IPAF, SUVA_KRANFUEHRERAUSWEIS, NIV_15, PSAGA, STAPLERAUSWEIS, ANDERE ]
+
+  responses:
+    BadRequestError:
+      description: |
+        (DE) Anfrage kann nicht verarbeitet werden.
+        (EN) Request cannot be processed.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    UnauthorizedError:
+      description: |
+        (DE) Keine gültigen Authentifizierungsdaten für die angeforderte Ressource vorhanden.
+        (EN) No valid authentication data available for the requested resource.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    ForbiddenError:
+      description: |
+        (DE) Keine gültige Berechtigung für die angeforderte Ressource vorhanden.
+        (EN) No valid permission available for the requested resource.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    NotFoundError:
+      description: |
+        (DE) Die angeforderte Resource konnte nicht gefunden werden.
+        (EN) The requested resource could not be found.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    InternalServerError:
+      description: |
+        (DE) Die Anfrage konnte nicht verarbeiten werden, da sie ungültige Daten enthält.
+        (EN) The request could not be processed because it contains invalid data.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
