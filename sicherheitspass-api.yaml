@@ -20,16 +20,16 @@ tags:
   - name: Bulk Upload
   - name: Conducting the Instruction
   - name: Identification Cards
-  - name: Identification Documents
   - name: Instructions
-  - name: Instruction Documents
   - name: Job Profiles
-  - name: Profile Picture
   - name: Safety Pass
 
 paths:
   /v1/partner/{partnerNr}/sicherheitspaesse/massenupload:
     post:
+      description: |
+        (DE) Massenupload von Sicherheitspässen. Die Sicherheitspässe werden validiert und - abhängig vom MassenUploadStatusEnumDto - gespeichert.
+        (EN) Bulk upload of safety passes. The safety passes are validated and, depending on MassenUploadStatusEnumDto, stored.
       operationId: saveAllSicherheitspaesse
       tags:
         - Bulk Upload
@@ -49,7 +49,9 @@ paths:
               $ref: '#/components/schemas/MassenUploadResultDto'
       responses:
         '200':
-          description: 'Die Sicherheitspässe wurden erfolgreich validiert und - abhängig vom MassenUploadStatusEnumDto - gespeichert.'
+          description: |
+            (DE) Die Sicherheitspässe wurden erfolgreich validiert und - abhängig vom MassenUploadStatusEnumDto - gespeichert.
+            (EN) The safety passes were validated successfully and, depending on MassenUploadStatusEnumDto, stored.
           content:
             application/json:
               schema:
@@ -65,6 +67,9 @@ paths:
 
   /v1/partner/{partnerNr}/sicherheitspaesse:
     get:
+      description: |
+        (DE) Listet alle verfügbaren Sicherheitspässe entsprechend den Suchfiltern.
+        (EN) Lists all available safety passes according to the search filters.
       operationId: findSicherheitspaesse
       tags:
         - Safety Pass
@@ -95,7 +100,9 @@ paths:
             format: date
       responses:
         '200':
-          description: 'Listet alle verfügbaren Sicherheitspässe entsprechend den Suchfiltern'
+          description: |
+            (DE) Listet alle verfügbaren Sicherheitspässe entsprechend den Suchfiltern.
+            (EN) Lists all available safety passes according to the search filters.
           content:
             application/json:
               schema:
@@ -109,7 +116,9 @@ paths:
 
   /v1/partner/{partnerNr}/sicherheitspaesse/instruktiondurchfuehrungen:
     post:
-      summary: 'Erstellt Instruktionsdurchführungen für eine Liste von SicherheitspassIds'
+      description: |
+        (DE) Erstellt Instruktionsdurchführungen für eine Liste von Sicherheitspass-Ids.
+        (EN) Creates instruction executions for a list of safety pass IDs.
       operationId: createInstruktionDurchfuehrungen
       tags:
         - Conducting the Instruction
@@ -129,7 +138,9 @@ paths:
               $ref: '#/components/schemas/InstruktionDurchfuehrungCreateDto'
       responses:
         '204':
-          description: 'Instruktionsdurchführung wurde erstellt'
+          description: |
+            (DE) Instruktionsdurchführung wurde erstellt.
+            (EN) Instruction execution was created.
         "400":
           $ref: "#/components/responses/BadRequestError"
         "401":
@@ -141,7 +152,9 @@ paths:
 
   /v1/partner/{partnerNr}/sicherheitspaesse/{id}:
     get:
-      summary: 'Liefert einen Sicherheitspass'
+      description: |
+        (DE) Liefert einen Sicherheitspass.
+        (EN) Returns a safety pass.
       operationId: getSicherheitspass
       tags:
         - Safety Pass
@@ -160,7 +173,9 @@ paths:
             $ref: '#/components/schemas/UUID'
       responses:
         '200':
-          description: 'Liefert einen Sicherheitspass'
+          description: |
+            (DE) Liefert einen Sicherheitspass.
+            (EN) Returns a safety pass.
           content:
             application/json:
               schema:
@@ -176,7 +191,9 @@ paths:
 
   /v1/partner/{partnerNr}/sicherheitspaesse/{sicherheitspassId}/ausweise:
     get:
-      summary: 'Liefert eine Liste von Ausweisen für einen Sicherheitspass'
+      description: |
+        (DE) Liefert eine Liste von Ausweisen für einen Sicherheitspass.
+        (EN) Returns a list of identification cards for a safety pass.
       operationId: findAusweise
       tags:
         - Identification Cards
@@ -195,7 +212,9 @@ paths:
             $ref: '#/components/schemas/UUID'
       responses:
         '200':
-          description: 'Liefert eine Liste von Ausweisen für einen Sicherheitspass'
+          description: |
+            (DE) Liefert eine Liste von Ausweisen für einen Sicherheitspass.
+            (EN) Returns a list of identification cards for a safety pass.
           content:
             application/json:
               schema:
@@ -209,7 +228,9 @@ paths:
 
   /v1/partner/{partnerNr}/sicherheitspaesse/{sicherheitspassId}/ausweise/{id}:
     get:
-      summary: 'Liefert einen Ausweis'
+      description: |
+        (DE) Liefert einen Ausweis.
+        (EN) Returns an identification card.
       operationId: getAusweis
       tags:
         - Identification Cards
@@ -233,7 +254,9 @@ paths:
             $ref: '#/components/schemas/UUID'
       responses:
         '200':
-          description: 'Liefert einen Ausweis'
+          description: |
+            (DE) Liefert einen Ausweis.
+            (EN) Returns an identification card.
           content:
             application/json:
               schema:
@@ -249,10 +272,12 @@ paths:
 
   /v1/partner/{partnerNr}/sicherheitspaesse/{sicherheitspassId}/ausweise/{ausweisId}/dokumente/{id}:
     get:
-      description: 'Herunterladen eines Ausweis-Dokumentes'
+      description: |
+        (DE) Herunterladen eines Ausweis-Dokumentes.
+        (EN) Download an identification card document.
       operationId: getAusweisDokument
       tags:
-        - Identification Documents
+        - Identification Cards
       security:
         - ApiKeyAuth: []
       parameters:
@@ -278,12 +303,16 @@ paths:
             $ref: '#/components/schemas/UUID'
       responses:
         '200':
-          description: 'Liefert den Dokumentinhalt als Binary-Stream'
+          description: |
+            (DE) Liefert den Dokumentinhalt als Binary-Stream.
+            (EN) Returns the document content as a binary stream.
           headers:
             Content-Disposition:
               schema:
                 type: string
-              description: Das Format ist `attachment; filename="name.<mimeTypeExt>"`
+              description: |
+                (DE) Das Format ist `attachment; filename="name.<mimeTypeExt>"`.
+                (EN) The format is `attachment; filename="name.<mimeTypeExt>"`.
           content:
             application/octet-stream:
               schema:
@@ -300,10 +329,12 @@ paths:
 
   /v1/partner/{partnerNr}/sicherheitspaesse/{sicherheitspassId}/profilbild:
     get:
-      description: 'Herunterladen eines Profilbildes'
+      description: |
+        (DE) Herunterladen eines Profilbildes.
+        (EN) Download a profile picture.
       operationId: getProfilbild
       tags:
-        - Profile Picture
+        - Safety Pass
       security:
         - ApiKeyAuth: []
       parameters:
@@ -319,12 +350,16 @@ paths:
             $ref: '#/components/schemas/UUID'
       responses:
         '200':
-          description: 'Liefert den Profilbildinhalt als Binary-Stream'
+          description: |
+            (DE) Liefert den Profilbildinhalt als Binary-Stream.
+            (EN) Returns the profile picture content as a binary stream.
           headers:
             Content-Disposition:
               schema:
                 type: string
-              description: Das Format ist `attachment; filename="name.<mimeTypeExt>"`
+              description: |
+                (DE) Das Format ist `attachment; filename="name.<mimeTypeExt>"`.
+                (EN) The format is `attachment; filename="name.<mimeTypeExt>"`.
           content:
             application/octet-stream:
               schema:
@@ -341,7 +376,9 @@ paths:
 
   /v1/partner/{partnerNr}/sicherheitspaesse/{sicherheitspassId}/instruktiondurchfuehrungen:
     get:
-      summary: 'Liefert eine Liste von Instruktionsdurchfuehrungen für einen Sicherheitspass'
+      description: |
+        (DE) Liefert eine Liste von Instruktionsdurchfuehrungen für einen Sicherheitspass.
+        (EN) Returns a list of instruction executions for a safety pass.
       operationId: findInstruktionDurchfuehrungen
       tags:
         - Conducting the Instruction
@@ -363,7 +400,9 @@ paths:
           schema:
             type: string
           required: true
-          description: Sprache des Benutzers (DE,FR,IT,PT)
+          description: |
+            (DE) Sprache des Benutzers (DE,FR,IT,PT).
+            (EN) User language (DE, FR, IT, PT).
         - name: jobProfilIds
           in: query
           schema:
@@ -385,7 +424,9 @@ paths:
             $ref: '#/components/schemas/InstruktionDurchfuehrungPageableDto'
       responses:
         '200':
-          description: 'Liefert eine Liste von Instruktionsdurchfuehrungen für einen Sicherheitspass'
+          description: |
+            (DE) Liefert eine Liste von Instruktionsdurchfuehrungen für einen Sicherheitspass.
+            (EN) Returns a list of instruction executions for a safety pass.
           content:
             application/json:
               schema:
@@ -399,7 +440,9 @@ paths:
 
   /v1/partner/{partnerNr}/sicherheitspaesse/{sicherheitspassId}/instruktiondurchfuehrungen/{id}:
     get:
-      summary: 'Liefert eine Instruktiondurchführung'
+      description: |
+        (DE) Liefert eine Instruktiondurchführung.
+        (EN) Returns an instruction execution.
       operationId: getInstruktionDurchfuehrung
       tags:
         - Conducting the Instruction
@@ -411,7 +454,9 @@ paths:
           schema:
             type: string
           required: true
-          description: Sprache des Benutzers (DE,FR,IT,PT)
+          description: |
+            (DE) Sprache des Benutzers (DE,FR,IT,PT).
+            (EN) User language (DE, FR, IT, PT).
         - name: partnerNr
           in: path
           required: true
@@ -429,7 +474,9 @@ paths:
             $ref: '#/components/schemas/UUID'
       responses:
         '200':
-          description: 'Liefert eine Instruktiondurchführung'
+          description: |
+            (DE) Liefert eine Instruktiondurchführung.
+            (EN) Returns an instruction execution.
           content:
             application/json:
               schema:
@@ -445,6 +492,9 @@ paths:
 
   /v1/partner/{partnerNr}/freigaben:
     get:
+      description: |
+        (DE) Listet alle verwalteten verfügbaren Sicherheitspässe für einen Betrieb entsprechend den Suchfiltern.
+        (EN) Lists all managed available safety passes for a company according to the search filters.
       operationId: findFreigaben
       tags:
         - Approvals
@@ -473,7 +523,9 @@ paths:
             $ref: '#/components/schemas/FreigabePageableDto'
       responses:
         '200':
-          description: 'Listet alle verwalteten verfügbaren Sicherheitspässe für einen Betrieb entsprechend den Suchfiltern'
+          description: |
+            (DE) Listet alle verwalteten verfügbaren Sicherheitspässe für einen Betrieb entsprechend den Suchfiltern.
+            (EN) Lists all managed available safety passes for a company according to the search filters.
           content:
             application/json:
               schema:
@@ -485,7 +537,9 @@ paths:
         "500":
           $ref: "#/components/responses/InternalServerError"
     post:
-      summary: 'Speichert eine Freigabe fuer einen Sicherheitspass oder Einladung und Betrieb im Status OFFEN'
+      description: |
+        (DE) Speichert eine Freigabe fuer einen Sicherheitspass oder Einladung und Betrieb im Status OFFEN.
+        (EN) Stores an approval for a safety pass or invitation and company in status OFFEN.
       operationId: createFreigabe
       tags:
         - Approvals
@@ -505,7 +559,9 @@ paths:
               $ref: '#/components/schemas/FreigabeCreateDto'
       responses:
         '204':
-          description: 'Freigabe wurde erfolgreich erstellt'
+          description: |
+            (DE) Freigabe wurde erfolgreich erstellt.
+            (EN) Approval was created successfully.
         "400":
           $ref: "#/components/responses/BadRequestError"
         "401":
@@ -517,6 +573,9 @@ paths:
 
   /v1/partner/{partnerNr}/freigaben/{id}:
     delete:
+      description: |
+        (DE) Löscht eine Freigabe für einen Sicherheitspass oder Einladung und Betrieb.
+        (EN) Deletes an approval for a safety pass or invitation and company.
       operationId: deleteFreigabe
       tags:
         - Approvals
@@ -535,7 +594,9 @@ paths:
             $ref: '#/components/schemas/UUID'
       responses:
         '204':
-          description: 'Freigabe wurde erfolgreich gelöscht'
+          description: |
+            (DE) Freigabe wurde erfolgreich gelöscht.
+            (EN) Approval was deleted successfully.
         "401":
           $ref: "#/components/responses/UnauthorizedError"
         "403":
@@ -545,7 +606,9 @@ paths:
 
   /v1/partner/{partnerNr}/instruktionen:
     get:
-      summary: 'Liefert eine Liste von Instruktionen'
+      description: |
+        (DE) Liefert eine Liste von Instruktionen.
+        (EN) Returns a list of instructions.
       operationId: findInstruktionen
       tags:
         - Instructions
@@ -562,7 +625,9 @@ paths:
           schema:
             type: string
           required: true
-          description: Sprache des Benutzers (DE,FR,IT,PT)
+          description: |
+            (DE) Sprache des Benutzers (DE,FR,IT,PT).
+            (EN) User language (DE, FR, IT, PT).
         - name: filter
           in: query
           required: false
@@ -577,7 +642,9 @@ paths:
             $ref: '#/components/schemas/InstruktionPageableDto'
       responses:
         '200':
-          description: 'Liefert eine Liste von Instruktionen'
+          description: |
+            (DE) Liefert eine Liste von Instruktionen.
+            (EN) Returns a list of instructions.
           content:
             application/json:
               schema:
@@ -589,7 +656,9 @@ paths:
         "500":
           $ref: "#/components/responses/InternalServerError"
     post:
-      summary: 'Erstellt eine eigene Instruktion'
+      description: |
+        (DE) Erstellt eine eigene Instruktion.
+        (EN) Creates a custom instruction.
       operationId: createInstruktion
       tags:
         - Instructions
@@ -601,7 +670,9 @@ paths:
           schema:
             type: string
           required: true
-          description: Sprache des Benutzers (DE,FR,IT,PT)
+          description: |
+            (DE) Sprache des Benutzers (DE,FR,IT,PT).
+            (EN) User language (DE, FR, IT, PT).
         - name: partnerNr
           in: path
           required: true
@@ -615,7 +686,9 @@ paths:
               type: object
               properties:
                 dokumente:
-                  description: 'Instruktion-Dokumente als Multipart-File, der filename und mimeTyp der Dokumente muss der DokumentMetadataDtoListe entsprechen.'
+                  description: |
+                    (DE) Instruktion-Dokumente als Multipart-File, der filename und mimeTyp der Dokumente muss der DokumentMetadataDtoListe entsprechen.
+                    (EN) Instruction documents as multipart files; filename and mimeType must match the DokumentMetadataDto list.
                   type: array
                   items:
                     type: string
@@ -626,7 +699,9 @@ paths:
                 - instruktion
       responses:
         '204':
-          description: 'Eigene Instruktion wurde erstellt'
+          description: |
+            (DE) Eigene Instruktion wurde erstellt.
+            (EN) Custom instruction was created.
         "400":
           $ref: "#/components/responses/BadRequestError"
         "401":
@@ -638,7 +713,9 @@ paths:
 
   /v1/partner/{partnerNr}/instruktionen/{id}:
     get:
-      summary: 'Liefert eine Instruktion'
+      description: |
+        (DE) Liefert eine Instruktion.
+        (EN) Returns an instruction.
       operationId: getInstruktion
       tags:
         - Instructions
@@ -650,7 +727,9 @@ paths:
           schema:
             type: string
           required: true
-          description: Alle möglichen Content-Sprachen (InstruktionenSprache)
+          description: |
+            (DE) Alle möglichen Content-Sprachen (InstruktionenSprache).
+            (EN) All available content languages (InstruktionenSprache).
         - name: partnerNr
           in: path
           required: true
@@ -663,7 +742,9 @@ paths:
             $ref: '#/components/schemas/UUID'
       responses:
         '200':
-          description: 'Liefert eine Instruktion'
+          description: |
+            (DE) Liefert eine Instruktion.
+            (EN) Returns an instruction.
           content:
             application/json:
               schema:
@@ -679,10 +760,12 @@ paths:
 
   /v1/partner/{partnerNr}/instruktionen/{instruktionId}/dokumente/{id}:
     get:
-      description: 'Herunterladen eines Instruktion-Dokumentes'
+      description: |
+        (DE) Herunterladen eines Instruktion-Dokumentes.
+        (EN) Download an instruction document.
       operationId: getInstruktionDokument
       tags:
-        - Instruction Documents
+        - Instructions
       security:
         - ApiKeyAuth: []
       parameters:
@@ -703,12 +786,16 @@ paths:
             $ref: '#/components/schemas/UUID'
       responses:
         '200':
-          description: 'Liefert den Dokumentinhalt als Binary-Stream'
+          description: |
+            (DE) Liefert den Dokumentinhalt als Binary-Stream.
+            (EN) Returns the document content as a binary stream.
           headers:
             Content-Disposition:
               schema:
                 type: string
-              description: Das Format ist `attachment; filename="name.<mimeTypeExt>"`
+              description: |
+                (DE) Das Format ist `attachment; filename="name.<mimeTypeExt>"`.
+                (EN) The format is `attachment; filename="name.<mimeTypeExt>"`.
           content:
             application/octet-stream:
               schema:
@@ -725,7 +812,9 @@ paths:
 
   /v1/partner/{partnerNr}/instruktionen/{id}/deaktivieren:
     put:
-      summary: 'Deaktiviert eine eigene Instruktion'
+      description: |
+        (DE) Deaktiviert eine eigene Instruktion.
+        (EN) Deactivates a custom instruction.
       operationId: deaktiviereInstruktion
       tags:
         - Instructions
@@ -737,7 +826,9 @@ paths:
           schema:
             type: string
           required: true
-          description: Sprache des Benutzers (DE,FR,IT,PT)
+          description: |
+            (DE) Sprache des Benutzers (DE,FR,IT,PT).
+            (EN) User language (DE, FR, IT, PT).
         - name: partnerNr
           in: path
           required: true
@@ -750,7 +841,9 @@ paths:
             $ref: '#/components/schemas/UUID'
       responses:
         '200':
-          description: 'Instruktion wurde erfolgreich deaktiviert'
+          description: |
+            (DE) Instruktion wurde erfolgreich deaktiviert.
+            (EN) Instruction was deactivated successfully.
           content:
             application/json:
               schema:
@@ -764,7 +857,9 @@ paths:
 
   /v1/partner/{partnerNr}/instruktionen/jobprofile:
     get:
-      summary: 'Liefert eine Liste von Jobprofilen'
+      description: |
+        (DE) Liefert eine Liste von Jobprofilen.
+        (EN) Returns a list of job profiles.
       operationId: getJobProfile
       tags:
         - Job Profiles
@@ -778,7 +873,9 @@ paths:
             $ref: '#/components/schemas/PartnerNummer'
       responses:
         '200':
-          description: 'Liefert eine Liste von Jobprofilen'
+          description: |
+            (DE) Liefert eine Liste von Jobprofilen.
+            (EN) Returns a list of job profiles.
           content:
             application/json:
               schema:
@@ -870,9 +967,9 @@ components:
     MassenUploadStatusEnumDto:
       type: string
       description: >
-        * INIT = Initialzustand, wenn der Client die Massenupload Items an den Server schickt 
-        * ERFOLGREICH = Alle Massenupload-Items sind fehlerfrei
-        * FEHLER = Einzelne Massenupload-Items enthalten Fehler
+        * INIT = (DE) Initialzustand, wenn der Client die Massenupload Items an den Server schickt. (EN) initial state when the client sends bulk upload items to the server.
+        * ERFOLGREICH = (DE) Alle Massenupload-Items sind fehlerfrei. (EN) all bulk upload items are valid.
+        * FEHLER = (DE) Einzelne Massenupload-Items enthalten Fehler. (EN) individual bulk upload items contain errors.
       enum: [ INIT, ERFOLGREICH, FEHLER ]
 
     MassenUploadMitarbeiterDto:
@@ -922,13 +1019,13 @@ components:
     MassenUploadMitarbeiterAttributEnumDto:
       type: string
       description: >
-        * AHV_NR = Ahv Nummer des Mitarbeiters
-        * VORNAME = Vorname des Mitarbeiters
-        * NACHNAME = Nachname des Mitarbeiters
-        * SPRACHE = Sprache des Mitarbeiters
-        * KOMMUNIKATION_KANAL = Kommunikationskanal [ EMAIL, MOBILE ]
-        * EMAIL = Email des Mitarbeiters
-        * MOBILE = Mobiltelefon des Mitarbeiters
+        * AHV_NR = (DE) Ahv Nummer des Mitarbeiters. (EN) AHV number of the employee.
+        * VORNAME = (DE) Vorname des Mitarbeiters. (EN) First name of the employee.
+        * NACHNAME = (DE) Nachname des Mitarbeiters. (EN) Last name of the employee.
+        * SPRACHE = (DE) Sprache des Mitarbeiters. (EN) Language of the employee.
+        * KOMMUNIKATION_KANAL = (DE) Kommunikationskanal [ EMAIL, MOBILE ]. (EN) Communication channel [ EMAIL, MOBILE ].
+        * EMAIL = (DE) Email des Mitarbeiters. (EN) Email of the employee.
+        * MOBILE = (DE) Mobiltelefon des Mitarbeiters. (EN) Mobile phone of the employee.
       enum: [ AHV_NR, VORNAME, NACHNAME, SPRACHE, KOMMUNIKATION_KANAL, EMAIL, MOBILE ]
 
     MassenUploadMitarbeiterFehlerGrundEnumDto:
@@ -937,11 +1034,12 @@ components:
       # AGE_OVER ist AMA spezifisch und hier ich relevant
       # TOO_MANY_INVALID, THIRD_STRIKE, TEN_LIMIT_LOCK: technische Exceptions vom ZasAdapter welche geworfen und nicht gefangen werden (für Throttling)
       description: >
-        * NOT_EXIST = Die Ahv Nummer existiert nicht
-        * INVALID_CHECKSUM = Die Prüfzimmer der Ahv Nummer ist falsch
-        * DUBLETTE = Die Ahv Nummer kommt mehrfach vor
-        * ALREADY_EXISTS = Es existiert bereits ein Sicherheitspass mit dieser Ahv Nummer (SicherheitspassUserIdDuplicateException, SicherheitspassSVNummerDuplicateException, SicherheitspassIdentityDuplicateException(vorname, nachname, geburtsdatum))
-        * ANDERE = Fehler von anderen Attributen als Ahv Nummer (gemäss MassenUploadMitarbeiterAttributEnumDto)
+        * NOT_EXIST = (DE) Die Ahv Nummer existiert nicht. (EN) The AHV number does not exist.
+        * INVALID_CHECKSUM = (DE) Die Prüfzimmer der Ahv Nummer ist falsch. (EN) The AHV checksum is invalid.
+        * DUBLETTE = (DE) Die Ahv Nummer kommt mehrfach vor. (EN) The AHV number appears multiple times.
+        * ALREADY_EXISTS = (DE) Es existiert bereits ein Sicherheitspass mit dieser Ahv Nummer. (EN) A safety pass already exists for this AHV number.
+          (SicherheitspassUserIdDuplicateException, SicherheitspassSVNummerDuplicateException, SicherheitspassIdentityDuplicateException(vorname, nachname, geburtsdatum))
+        * ANDERE = (DE) Fehler von anderen Attributen als Ahv Nummer (gemäss MassenUploadMitarbeiterAttributEnumDto). (EN) Error from other attributes than AHV number (according to MassenUploadMitarbeiterAttributEnumDto).
       enum: [ NOT_EXIST, INVALID_CHECKSUM, DUBLETTE, ALREADY_EXISTS, ANDERE ]
 
     MitarbeiterDto:
@@ -1033,7 +1131,9 @@ components:
 
     StatisticDto:
       type: object
-      description: 'Stellt die Anzahl der Datensätze für einen bestimmten Filter dar'
+      description: |
+        (DE) Stellt die Anzahl der Datensätze für einen bestimmten Filter dar.
+        (EN) Represents the number of records for a specific filter.
       properties:
         name:
           $ref: '#/components/schemas/StatisticNameEnumDto'
@@ -1045,9 +1145,9 @@ components:
     StatisticNameEnumDto:
       type: string
       description: >
-        * INSTRUKTION_DURCHFUEHRUNG_STATUS = Instruktion Durchfuehrung Status
-        * JOB_PROFIL = Job Profil
-        * INSTRUKTION_OWNER = Instruktion Owner
+        * INSTRUKTION_DURCHFUEHRUNG_STATUS = (DE) Instruktion Durchfuehrung Status. (EN) Instruction execution status.
+        * JOB_PROFIL = (DE) Job Profil. (EN) Job profile.
+        * INSTRUKTION_OWNER = (DE) Instruktion Owner. (EN) Instruction owner.
       enum: [ INSTRUKTION_DURCHFUEHRUNG_STATUS, JOB_PROFIL, INSTRUKTION_OWNER ]
 
     StatisticDetailsDto:
@@ -1098,11 +1198,16 @@ components:
       type: object
       properties:
         sicherheitspassIds:
-          description: 'Im Privat Kontext werden allfällig übergebene SicherheitspassIds ignoriert und UserContext übernommen.'
+          description: |
+            (DE) Eine Liste von Sicherheitspass-IDs.
+            (EN) A list of safety pass IDs.
           type: array
           items:
             $ref: '#/components/schemas/UUID'
         instruktionenIds:
+          description: |
+            (DE) Eine Liste von Instruktionen-IDs.
+            (EN) A list of instruction IDs.
           type: array
           items:
             $ref: '#/components/schemas/UUID'
@@ -1204,7 +1309,9 @@ components:
             status:
               $ref: '#/components/schemas/InstruktionDurchfuehrungStatusEnumDto'
             stateData:
-              description: 'Speichert den Runtime State eines WBT'
+              description: |
+                (DE) Speichert den Runtime State eines WBT.
+                (EN) Stores the runtime state of a web-based training (WBT).
               type: string
             instruktion:
               $ref: '#/components/schemas/InstruktionDto'
@@ -1213,7 +1320,9 @@ components:
         - instruktion
 
     InstruktionFilterDto:
-      description: Filter von Instruktionen
+      description: |
+        (DE) Filter von Instruktionen.
+        (EN) Instruction filters.
       type: object
       properties:
         titel:
@@ -1348,12 +1457,16 @@ components:
           type: boolean
 
     PartnerNummer:
-      description: 'ID eines Geschäftspartners.'
+      description: |
+        (DE) ID eines Geschäftspartners.
+        (EN) ID of a business partner.
       type: string
       maxLength: 50
 
     AhvNr:
-      description: 'Sozialversicherungsnummer'
+      description: |
+        (DE) Sozialversicherungsnummer.
+        (EN) Social security number.
       type: string
       pattern: '^\d{3}\.\d{4}\.\d{4}\.\d{2}$'
       x-suva-validators: [ 'svNumber' ]
@@ -1428,95 +1541,103 @@ components:
     InstruktionTypEnumDto:
       type: string
       description: >
-        * E_LEARNING = Typ E-Learning-Instruktion
-        * TEXT = Typ Text mit Links-Instruktion
-        * VIDEO = Typ Video-Instruktion
+        * E_LEARNING = (DE) Typ E-Learning-Instruktion. (EN) E-learning instruction type.
+        * TEXT = (DE) Typ Text mit Links-Instruktion. (EN) Text-with-links instruction type.
+        * VIDEO = (DE) Typ Video-Instruktion. (EN) Video instruction type.
       enum: [ E_LEARNING, TEXT, VIDEO ]
 
     InstruktionOwnerEnumDto:
       type: string
       description: >
-        * SUVA = Owner Suva
-        * INDIVIDUELL = Owner Individuell
+        * SUVA = (DE) Owner Suva. (EN) Owner Suva.
+        * INDIVIDUELL = (DE) Owner Individuell. (EN) Individual owner.
       enum: [ SUVA, INDIVIDUELL ]
 
     InstruktionSichtbarkeitEnumDto:
       type: string
       description: >
-        * FACE_2_FACE = Sichtbarkeit bei Face2Face
-        * ONLINE_KATALOG = Sichtbarkeit beim Online-Katalog
+        * FACE_2_FACE = (DE) Sichtbarkeit bei Face2Face. (EN) Visibility for face-to-face.
+        * ONLINE_KATALOG = (DE) Sichtbarkeit beim Online-Katalog. (EN) Visibility in the online catalog.
       enum: [ FACE_2_FACE, ONLINE_KATALOG ]
 
     ScormFormatEnumDto:
       type: string
       description: >
-        * 1.2 = Scorm Format 1.2
-        * 2004 = Scorm Format 2004
-        * AICC = Scorm Format AICC
+        * 1.2 = (DE) Scorm Format 1.2. (EN) SCORM format 1.2.
+        * 2004 = (DE) Scorm Format 2004. (EN) SCORM format 2004.
+        * AICC = (DE) Scorm Format AICC. (EN) SCORM format AICC.
       enum: [ 1.2, 2004, AICC ]
 
     InstruktionDurchfuehrungStatusEnumDto:
       type: string
       description: >
-        * OFFEN = Durchfuehrung offen
-        * ERLEDIGT = Durchfuehrung erledigt
-        * ABGELAUFEN = Durchfuehrung abgelaufen
+        * OFFEN = (DE) Durchfuehrung offen. (EN) Execution open.
+        * ERLEDIGT = (DE) Durchfuehrung erledigt. (EN) Execution completed.
+        * ABGELAUFEN = (DE) Durchfuehrung abgelaufen. (EN) Execution expired.
       enum: [ OFFEN, ERLEDIGT, ABGELAUFEN ]
 
     FreigabeStatusEnumDto:
       type: string
       description: >
-        * ERTEILT = Freigabe erteilt
-        * OFFEN = Freigabe offen
+        * ERTEILT = (DE) Freigabe erteilt. (EN) Approval granted.
+        * OFFEN = (DE) Freigabe offen. (EN) Approval open.
       enum: [ ERTEILT, OFFEN ]
 
     KommunikationKanalEnumDto:
       type: string
       description: >
-        * EMAIL = Email Adresse
-        * MOBILE = Telefon mobile
+        * EMAIL = (DE) Email Adresse. (EN) Email address.
+        * MOBILE = (DE) Telefon mobile. (EN) Mobile phone.
       enum: [ EMAIL, MOBILE ]
 
     SpracheEnumDto:
       type: string
       description: >
-        * DE = Deutsch
-        * FR = Französisch
-        * IT = Italienisch
-        * PT = Portugiesisch
+        * DE = (DE) Deutsch. (EN) German.
+        * FR = (DE) Französisch. (EN) French.
+        * IT = (DE) Italienisch. (EN) Italian.
+        * PT = (DE) Portugiesisch. (EN) Portuguese.
       enum: [ DE, FR, IT, PT ]
 
     InstruktionenSpracheEnumDto:
       type: string
       description: >
-        * DE = Deutsch
-        * FR = Französisch
-        * IT = Italienisch
-        * HR = Kroatisch
-        * PL = Polnisch
-        * PT = Portugiesisch
-        * SQ = Albanisch
-        * SR = Serbisch
+        * DE = (DE) Deutsch. (EN) German.
+        * FR = (DE) Französisch. (EN) French.
+        * IT = (DE) Italienisch. (EN) Italian.
+        * HR = (DE) Kroatisch. (EN) Croatian.
+        * PL = (DE) Polnisch. (EN) Polish.
+        * PT = (DE) Portugiesisch. (EN) Portuguese.
+        * SQ = (DE) Albanisch. (EN) Albanian.
+        * SR = (DE) Serbisch. (EN) Serbian.
       enum: [ DE, FR, IT, HR, PL, PT, SQ, SR ]
 
     FreigabePageableDto:
       type: object
       properties:
         page:
-          description: 'Auf dieser Seite beginnen (erste Seite = 0)'
+          description: |
+            (DE) Auf dieser Seite beginnen (erste Seite = 0).
+            (EN) Start on this page (first page = 0).
           default: 0
           type: integer
         size:
-          description: 'Diese Seitengröße verwenden'
+          description: |
+            (DE) Diese Seitengröße verwenden.
+            (EN) Use this page size.
           default: 20
           type: integer
         orderBy:
-          description: 'Namen der Properties, nach denen die Ergebnismenge sortiert werden soll'
+          description: |
+            (DE) Namen der Properties, nach denen die Ergebnismenge sortiert werden soll.
+            (EN) Names of properties used to sort the result set.
           type: array
           items:
             $ref: '#/components/schemas/FreigabeSortByEnumDto'
         direction:
-          description: 'Richtungen der Sortierreihenfolgen'
+          description: |
+            (DE) Richtungen der Sortierreihenfolgen
+            (EN) Sort directions.
           type: array
           items:
             $ref: '#/components/schemas/SortDirectionEnumDto'
@@ -1530,20 +1651,28 @@ components:
       type: object
       properties:
         page:
-          description: 'Auf dieser Seite beginnen (erste Seite = 0)'
+          description: |
+            (DE) Auf dieser Seite beginnen (erste Seite = 0).
+            (EN) Start on this page (first page = 0).
           default: 0
           type: integer
         size:
-          description: 'Diese Seitengröße verwenden'
+          description: |
+            (DE) Diese Seitengröße verwenden.
+            (EN) Use this page size.
           default: 20
           type: integer
         orderBy:
-          description: 'Namen der Properties, nach denen die Ergebnismenge sortiert werden soll'
+          description: |
+            (DE) Namen der Properties, nach denen die Ergebnismenge sortiert werden soll.
+            (EN) Names of properties used to sort the result set.
           type: array
           items:
             $ref: '#/components/schemas/InstruktionSortByEnumDto'
         direction:
-          description: 'Richtungen der Sortierreihenfolgen'
+          description: |
+            (DE) Richtungen der Sortierreihenfolgen.
+            (EN) Sort directions.
           type: array
           items:
             $ref: '#/components/schemas/SortDirectionEnumDto'
@@ -1557,20 +1686,28 @@ components:
       type: object
       properties:
         page:
-          description: 'Auf dieser Seite beginnen (erste Seite = 0)'
+          description: |
+            (DE) Auf dieser Seite beginnen (erste Seite = 0).
+            (EN) Start on this page (first page = 0).
           default: 0
           type: integer
         size:
-          description: 'Diese Seitengröße verwenden'
+          description: |
+            (DE) Diese Seitengröße verwenden.
+            (EN) Use this page size.
           default: 20
           type: integer
         orderBy:
-          description: 'Namen der Properties, nach denen die Ergebnismenge sortiert werden soll'
+          description: |
+            (DE) Namen der Properties, nach denen die Ergebnismenge sortiert werden soll.
+            (EN) Names of properties used to sort the result set.
           type: array
           items:
             $ref: '#/components/schemas/InstruktionDurchfuehrungSortByEnumDto'
         direction:
-          description: 'Richtungen der Sortierreihenfolgen'
+          description: |
+            (DE) Richtungen der Sortierreihenfolgen.
+            (EN) Sort directions.
           type: array
           items:
             $ref: '#/components/schemas/SortDirectionEnumDto'
@@ -1583,31 +1720,31 @@ components:
     FreigabeSortByEnumDto:
       type: string
       description: >
-        * STATUS = Status
-        * NACHNAMEN = Nachnamen
-        * FAVORIT = Favorit
+        * STATUS = (DE) Status. (EN) Status.
+        * NACHNAMEN = (DE) Nachnamen. (EN) Last names.
+        * FAVORIT = (DE) Favorit. (EN) Favorite.
       enum: [ STATUS, NACHNAMEN, FAVORIT ]
 
     InstruktionSortByEnumDto:
       type: string
       description: >
-        * TITEL = Titel
+        * TITEL = (DE) Titel. (EN) Title.
       enum: [ TITEL ]
 
     InstruktionDurchfuehrungSortByEnumDto:
       type: string
       description: >
-        * TITEL = Titel
-        * STATUS = Status
-        * ERLEDIGT_AM = Erledigt am
-        * GUELTIG_BIS = Gültig bis
+        * TITEL = (DE) Titel. (EN) Title.
+        * STATUS = (DE) Status. (EN) Status.
+        * ERLEDIGT_AM = (DE) Erledigt am. (EN) Completed on.
+        * GUELTIG_BIS = (DE) Gültig bis. (EN) Valid until.
       enum: [ TITEL, STATUS, ERLEDIGT_AM, GUELTIG_BIS ]
 
     SortDirectionEnumDto:
       type: string
       description: >
-        * ASC = Ascending
-        * DESC = Descending
+        * ASC = (DE) Aufsteigend. (EN) Ascending.
+        * DESC = (DE) Absteigend. (EN) Descending.
       enum: [ ASC, DESC ]
 
     AusweisListDto:
@@ -1665,22 +1802,22 @@ components:
     AusweisTypEnumDto:
       type: string
       description: >
-        * AUSWEIS = Ausweis
-        * ZERTIFIKAT = Zertifikat
+        * AUSWEIS = (DE) Ausweis. (EN) Identification card.
+        * ZERTIFIKAT = (DE) Zertifikat. (EN) Certificate.
       enum: [ AUSWEIS, ZERTIFIKAT ]
 
     AusweisartEnumDto:
       type: string
       description: >
-        * ARBEITSBUEHNENAUSWEIS = Arbeitsbühnen Ausweis
-        * BAUMASCHINENFUEHRERAUSWEIS = Baumaschinenführer Ausweis
-        * FUEHRERAUSWEIS = Führerausweis
-        * HEBEBUEHNENAUSWEIS_IPAF = Hebebühnenausweis / IPAF
-        * SUVA_KRANFUEHRERAUSWEIS = Suva-Kranführerausweis
-        * NIV_15 = NIV 15
-        * PSAGA = PSAgA
-        * STAPLERAUSWEIS = Staplerausweis
-        * ANDERE = Andere
+        * ARBEITSBUEHNENAUSWEIS = (DE) Arbeitsbühnen Ausweis. (EN) Aerial work platform ID.
+        * BAUMASCHINENFUEHRERAUSWEIS = (DE) Baumaschinenführer Ausweis. (EN) Construction machine operator ID.
+        * FUEHRERAUSWEIS = (DE) Führerausweis. (EN) Driving license.
+        * HEBEBUEHNENAUSWEIS_IPAF = (DE) Hebebühnenausweis / IPAF. (EN) Lifting platform ID / IPAF.
+        * SUVA_KRANFUEHRERAUSWEIS = (DE) Suva-Kranführerausweis. (EN) Suva crane operator ID.
+        * NIV_15 = (DE) NIV 15. (EN) NIV 15.
+        * PSAGA = (DE) PSAgA. (EN) PSAgA.
+        * STAPLERAUSWEIS = (DE) Staplerausweis. (EN) Forklift ID.
+        * ANDERE = (DE) Andere. (EN) Other.
       enum: [ ARBEITSBUEHNENAUSWEIS, BAUMASCHINENFUEHRERAUSWEIS, FUEHRERAUSWEIS, HEBEBUEHNENAUSWEIS_IPAF, SUVA_KRANFUEHRERAUSWEIS, NIV_15, PSAGA, STAPLERAUSWEIS, ANDERE ]
 
   responses:
