@@ -888,6 +888,14 @@ paths:
           $ref: "#/components/responses/InternalServerError"
 
 components:
+  securitySchemes:
+    ApiKeyAuth:
+      description: |
+        (DE) Authentifizierung über Bearer-Token
+        (EN) Authentication via Bearer Token
+      type: http
+      scheme: bearer
+
   schemas:
     BasisDto:
       type: object
