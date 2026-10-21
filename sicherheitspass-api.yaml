@@ -56,14 +56,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MassenUploadResultDto'
-        "400":
-          $ref: "#/components/responses/BadRequestError"
-        "401":
-          $ref: "#/components/responses/UnauthorizedError"
-        "403":
-          $ref: "#/components/responses/ForbiddenError"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /v1/partner/{partnerNr}/sicherheitspaesse:
     get:
@@ -107,12 +107,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SicherheitspassUebersichtListDto'
-        "401":
-          $ref: "#/components/responses/UnauthorizedError"
-        "403":
-          $ref: "#/components/responses/ForbiddenError"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /v1/partner/{partnerNr}/sicherheitspaesse/instruktiondurchfuehrungen:
     post:
@@ -141,14 +141,14 @@ paths:
           description: |
             (DE) Instruktionsdurchführung wurde erstellt.
             (EN) Instruction execution was created.
-        "400":
-          $ref: "#/components/responses/BadRequestError"
-        "401":
-          $ref: "#/components/responses/UnauthorizedError"
-        "403":
-          $ref: "#/components/responses/ForbiddenError"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /v1/partner/{partnerNr}/sicherheitspaesse/{id}:
     get:
@@ -180,14 +180,51 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SicherheitspassDto'
-        "401":
-          $ref: "#/components/responses/UnauthorizedError"
-        "403":
-          $ref: "#/components/responses/ForbiddenError"
-        "404":
-          $ref: "#/components/responses/NotFoundError"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v1/partner/{partnerNr}/sicherheitspaesse/{sicherheitspassId}/ausweisarten:
+    get:
+      description: |
+        (DE) Liefert eine Liste aller verfügbaren Ausweisarten für einen Sicherheitspass.
+        (EN) Returns a list of all available identification card types for a safety pass.
+      operationId: findAusweisarten
+      tags:
+        - Identification Cards
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: partnerNr
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PartnerNummer'
+        - name: sicherheitspassId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        '200':
+          description: |
+            (DE) Liefert eine Liste aller verfügbaren Ausweisarten für einen Sicherheitspass.
+            (EN) Returns a list of all available identification card types for a safety pass.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AusweisartListDto'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /v1/partner/{partnerNr}/sicherheitspaesse/{sicherheitspassId}/ausweise:
     get:
@@ -219,12 +256,68 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AusweisListDto'
-        "401":
-          $ref: "#/components/responses/UnauthorizedError"
-        "403":
-          $ref: "#/components/responses/ForbiddenError"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      description: |
+        (DE) Erstellt einen Ausweis für einen Sicherheitspass
+        (EN) Creates an identification card for a safety pass
+      operationId: createAusweis
+      tags:
+        - Identification Cards
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: partnerNr
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PartnerNummer'
+        - name: sicherheitspassId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                dokumente:
+                  description: |
+                    (DE) Ausweis-Dokumente als Multipart-File, der filename und mimeTyp der Dokumente muss der DokumentMetadataDtoListe entsprechen.
+                    (EN) Identification card documents as multipart files, the filename and mimeType of the documents must match the DokumentMetadataDtoList.
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                ausweis:
+                  $ref: '#/components/schemas/AusweisCreateDto'
+              required:
+                - ausweis
+      responses:
+        '200':
+          description: |
+            (DE) Liefert den erstellten Ausweis
+            (EN) Returns the created identification card
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AusweisDto'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /v1/partner/{partnerNr}/sicherheitspaesse/{sicherheitspassId}/ausweise/{id}:
     get:
@@ -261,14 +354,50 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AusweisDto'
-        "401":
-          $ref: "#/components/responses/UnauthorizedError"
-        "403":
-          $ref: "#/components/responses/ForbiddenError"
-        "404":
-          $ref: "#/components/responses/NotFoundError"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      description: |
+        (DE) Löscht einen Ausweis von einem Sicherheitspass
+        (EN) Deletes an identification card from a safety pass
+      operationId: deleteAusweis
+      tags:
+        - Identification Cards
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: partnerNr
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PartnerNummer'
+        - name: sicherheitspassId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        '204':
+          description: |
+            (DE) Ausweis wurde erfolgreich gelöscht
+            (EN) Identification card was successfully deleted
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /v1/partner/{partnerNr}/sicherheitspaesse/{sicherheitspassId}/ausweise/{ausweisId}/dokumente/{id}:
     get:
@@ -318,14 +447,14 @@ paths:
               schema:
                 type: string
                 format: binary
-        "401":
-          $ref: "#/components/responses/UnauthorizedError"
-        "403":
-          $ref: "#/components/responses/ForbiddenError"
-        "404":
-          $ref: "#/components/responses/NotFoundError"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /v1/partner/{partnerNr}/sicherheitspaesse/{sicherheitspassId}/profilbild:
     get:
@@ -365,14 +494,14 @@ paths:
               schema:
                 type: string
                 format: binary
-        "401":
-          $ref: "#/components/responses/UnauthorizedError"
-        "403":
-          $ref: "#/components/responses/ForbiddenError"
-        "404":
-          $ref: "#/components/responses/NotFoundError"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /v1/partner/{partnerNr}/sicherheitspaesse/{sicherheitspassId}/instruktiondurchfuehrungen:
     get:
@@ -431,12 +560,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/InstruktionDurchfuehrungPageDto'
-        "401":
-          $ref: "#/components/responses/UnauthorizedError"
-        "403":
-          $ref: "#/components/responses/ForbiddenError"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /v1/partner/{partnerNr}/sicherheitspaesse/{sicherheitspassId}/instruktiondurchfuehrungen/{id}:
     get:
@@ -481,14 +610,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/InstruktionDurchfuehrungDto'
-        "401":
-          $ref: "#/components/responses/UnauthorizedError"
-        "403":
-          $ref: "#/components/responses/ForbiddenError"
-        "404":
-          $ref: "#/components/responses/NotFoundError"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /v1/partner/{partnerNr}/freigaben:
     get:
@@ -530,12 +659,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/FreigabePageDto'
-        "401":
-          $ref: "#/components/responses/UnauthorizedError"
-        "403":
-          $ref: "#/components/responses/ForbiddenError"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
     post:
       description: |
         (DE) Speichert eine Freigabe fuer einen Sicherheitspass oder Einladung und Betrieb im Status OFFEN.
@@ -562,14 +691,14 @@ paths:
           description: |
             (DE) Freigabe wurde erfolgreich erstellt.
             (EN) Approval was created successfully.
-        "400":
-          $ref: "#/components/responses/BadRequestError"
-        "401":
-          $ref: "#/components/responses/UnauthorizedError"
-        "403":
-          $ref: "#/components/responses/ForbiddenError"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /v1/partner/{partnerNr}/freigaben/{id}:
     delete:
@@ -597,12 +726,12 @@ paths:
           description: |
             (DE) Freigabe wurde erfolgreich gelöscht.
             (EN) Approval was deleted successfully.
-        "401":
-          $ref: "#/components/responses/UnauthorizedError"
-        "403":
-          $ref: "#/components/responses/ForbiddenError"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /v1/partner/{partnerNr}/instruktionen:
     get:
@@ -649,12 +778,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/InstruktionPageDto'
-        "401":
-          $ref: "#/components/responses/UnauthorizedError"
-        "403":
-          $ref: "#/components/responses/ForbiddenError"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
     post:
       description: |
         (DE) Erstellt eine eigene Instruktion.
@@ -702,14 +831,14 @@ paths:
           description: |
             (DE) Eigene Instruktion wurde erstellt.
             (EN) Custom instruction was created.
-        "400":
-          $ref: "#/components/responses/BadRequestError"
-        "401":
-          $ref: "#/components/responses/UnauthorizedError"
-        "403":
-          $ref: "#/components/responses/ForbiddenError"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /v1/partner/{partnerNr}/instruktionen/{id}:
     get:
@@ -749,14 +878,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/InstruktionDto'
-        "401":
-          $ref: "#/components/responses/UnauthorizedError"
-        "403":
-          $ref: "#/components/responses/ForbiddenError"
-        "404":
-          $ref: "#/components/responses/NotFoundError"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /v1/partner/{partnerNr}/instruktionen/{instruktionId}/dokumente/{id}:
     get:
@@ -801,14 +930,14 @@ paths:
               schema:
                 type: string
                 format: binary
-        "401":
-          $ref: "#/components/responses/UnauthorizedError"
-        "403":
-          $ref: "#/components/responses/ForbiddenError"
-        "404":
-          $ref: "#/components/responses/NotFoundError"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /v1/partner/{partnerNr}/instruktionen/{id}/deaktivieren:
     put:
@@ -848,12 +977,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/InstruktionDto'
-        "401":
-          $ref: "#/components/responses/UnauthorizedError"
-        "403":
-          $ref: "#/components/responses/ForbiddenError"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /v1/partner/{partnerNr}/instruktionen/jobprofile:
     get:
@@ -880,12 +1009,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/JobProfilListDto'
-        "401":
-          $ref: "#/components/responses/UnauthorizedError"
-        "403":
-          $ref: "#/components/responses/ForbiddenError"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
 components:
   securitySchemes:
@@ -1807,6 +1936,29 @@ components:
         - ausweistypen
         - dokumente
 
+    AusweisartListDto:
+      type: object
+      properties:
+        ausweisarten:
+          type: array
+          items:
+            $ref: '#/components/schemas/AusweisartDto'
+      required:
+        - ausweisarten
+
+    AusweisartDto:
+      type: object
+      properties:
+        art:
+          $ref: '#/components/schemas/AusweisartEnumDto'
+        typen:
+          type: array
+          items:
+            type: string
+      required:
+        - art
+        - typen
+
     AusweisTypEnumDto:
       type: string
       description: >
@@ -1836,7 +1988,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/Error"
+            $ref: '#/components/schemas/Error'
 
     UnauthorizedError:
       description: |
@@ -1845,7 +1997,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/Error"
+            $ref: '#/components/schemas/Error'
 
     ForbiddenError:
       description: |
@@ -1854,7 +2006,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/Error"
+            $ref: '#/components/schemas/Error'
 
     NotFoundError:
       description: |
@@ -1863,7 +2015,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/Error"
+            $ref: '#/components/schemas/Error'
 
     InternalServerError:
       description: |
@@ -1872,4 +2024,4 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/Error"
+            $ref: '#/components/schemas/Error'
