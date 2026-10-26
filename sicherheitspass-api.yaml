@@ -1899,6 +1899,8 @@ components:
         - $ref: '#/components/schemas/AusweisCreateDto'
         - type: object
           properties:
+            erstellerPartnerNr:
+              $ref: '#/components/schemas/PartnerNummer'
             shouldSendNotification:
               type: boolean
 
