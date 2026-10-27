@@ -1913,8 +1913,10 @@ components:
               $ref: '#/components/schemas/AusweisTypEnumDto'
             titel:
               type: string
+              maxLength: 300
             ausgestelltVon:
               type: string
+              maxLength: 100
             ausgestelltAm:
               type: string
               format: date
@@ -1925,6 +1927,7 @@ components:
               $ref: '#/components/schemas/AusweisartEnumDto'
             ausweisnummer:
               type: string
+              maxLength: 40
             ausweistypen:
               type: array
               items:
