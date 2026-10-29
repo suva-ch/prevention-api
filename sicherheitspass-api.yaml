@@ -1391,6 +1391,7 @@ components:
               type: string
             beschreibung:
               type: string
+              maxLength: 4000
             startbild:
               $ref: '#/components/schemas/StartbildDto'
             scormFormat:
@@ -1606,32 +1607,26 @@ components:
         (EN) Social security number.
       type: string
       pattern: '^\d{3}\.\d{4}\.\d{4}\.\d{2}$'
-      x-suva-validators: [ 'svNumber' ]
 
     Vorname:
       type: string
       maxLength: 40
-      x-suva-validators: [ 'firstname(40)' ]
 
     Nachname:
       type: string
       maxLength: 40
-      x-suva-validators: [ 'lastname(40)' ]
 
     Geburtsdatum:
       type: string
       format: date
-      x-suva-validators: [ 'dateOfBirth(120)' ]
 
     Email:
       type: string
       maxLength: 128
-      x-suva-validators: [ 'email(128)' ]
 
     Mobile:
       type: string
       maxLength: 30
-      x-suva-validators: [ 'phone()' ]
 
     DokumentMetadataDto:
       allOf:
